@@ -15,12 +15,15 @@ export async function signIn(email: string, password: string) {
     userId: user.id
   }, process.env.JWT_SECRET);
 
-  const session = await Session.createNew(user.id, token);
+  await Session.createNew(user.id, token);
 
   return {
     user: {
       id: user.id,
-      email: user.email
+      email: user.email,
+      ticket: user.ticket,
+      accomodation: user.accomodation,
+      status: user.status,
     },
 
     token
