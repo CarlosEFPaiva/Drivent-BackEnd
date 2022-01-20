@@ -12,6 +12,9 @@ export default class Ticket extends BaseEntity {
   price: string;
 
   static async getTicketsInfo() {
-    return await this.find();
+    const ticket = await this.find();
+    return ticket.map(({ id, name, price }) => {
+      return ({ id, name, price });
+    });
   }
 }
