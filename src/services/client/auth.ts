@@ -18,14 +18,7 @@ export async function signIn(email: string, password: string) {
   await Session.createNew(user.id, token);
 
   return {
-    user: {
-      id: user.id,
-      email: user.email,
-      ticket: user.ticket,
-      accomodation: user.accomodation,
-      status: user.status,
-    },
-
+    user: user.getMainAtributes(),
     token
   };
 }

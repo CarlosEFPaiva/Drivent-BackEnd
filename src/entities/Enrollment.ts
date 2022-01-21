@@ -2,6 +2,7 @@ import CpfNotAvailableError from "@/errors/CpfNotAvailable";
 import EnrollmentData from "@/interfaces/enrollment";
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
 import Address from "@/entities/Address";
+import User from "./User";
 
 @Entity("enrollments")
 export default class Enrollment extends BaseEntity {
@@ -47,12 +48,17 @@ export default class Enrollment extends BaseEntity {
 
   static async createOrUpdate(data: EnrollmentData) {
     const cpfEnrollment = await this.findOne({ where: { cpf: data.cpf } });
+    const user = await User.findById(data.userId);
 
     if(cpfEnrollment && cpfEnrollment.userId !== data.userId) {
       throw new CpfNotAvailableError(data.cpf);
     }
 
     let enrollment = await this.findOne({ where: { userId: data.userId } });
+
+    if (!enrollment) {
+      user.updateStatus(2);
+    }
 
     enrollment ||= Enrollment.create();
     
@@ -61,6 +67,7 @@ export default class Enrollment extends BaseEntity {
 
     enrollment.address.enrollmentId = enrollment.id;
     await enrollment.address.save();
+    return user;
   }
 
   static async getByUserIdWithAddress(userId: number) {
