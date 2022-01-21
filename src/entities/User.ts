@@ -86,5 +86,15 @@ export default class User extends BaseEntity {
     await this.save();
     return this;
   }
+
+  getMainAtributes() {
+    return {
+      id: this.id,
+      email: this.email,
+      ticket: this.ticket,
+      accomodation: this.accomodation,
+      status: this.status,
+    };
+  }
 }
 

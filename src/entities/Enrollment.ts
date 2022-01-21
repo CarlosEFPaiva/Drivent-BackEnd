@@ -48,6 +48,7 @@ export default class Enrollment extends BaseEntity {
 
   static async createOrUpdate(data: EnrollmentData) {
     const cpfEnrollment = await this.findOne({ where: { cpf: data.cpf } });
+    const user = await User.findById(data.userId);
 
     if(cpfEnrollment && cpfEnrollment.userId !== data.userId) {
       throw new CpfNotAvailableError(data.cpf);
@@ -56,7 +57,6 @@ export default class Enrollment extends BaseEntity {
     let enrollment = await this.findOne({ where: { userId: data.userId } });
 
     if (!enrollment) {
-      const user = await User.findById(data.userId);
       user.updateStatus(2);
     }
 
@@ -67,6 +67,7 @@ export default class Enrollment extends BaseEntity {
 
     enrollment.address.enrollmentId = enrollment.id;
     await enrollment.address.save();
+    return user;
   }
 
   static async getByUserIdWithAddress(userId: number) {
