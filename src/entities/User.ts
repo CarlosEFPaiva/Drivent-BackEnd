@@ -5,6 +5,7 @@ import Accomodation from "./Accomodation";
 
 import bcrypt from "bcrypt";
 import EmailNotAvailableError from "@/errors/EmailNotAvailable";
+import InvalidDataError from "@/errors/InvalidData";
 
 @Entity("users")
 export default class User extends BaseEntity {
@@ -62,6 +63,38 @@ export default class User extends BaseEntity {
     }
 
     return null;
+  }
+
+  static async findById(id: number) {
+    const user = await this.findOne({ id });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
+  async updateStatus(newStatusId: number) {
+    const newStatus = await Status.findOne({ id: newStatusId });
+
+    if (!newStatus) {
+      throw new InvalidDataError("Status", ["Status not found"]);
+    }
+
+    this.status = newStatus;
+    await this.save();
+    return this;
+  }
+
+  getMainAtributes() {
+    return {
+      id: this.id,
+      email: this.email,
+      ticket: this.ticket,
+      accomodation: this.accomodation,
+      status: this.status,
+    };
   }
 }
 

@@ -7,7 +7,7 @@ import UnauthorizedError from "../../../src/errors/Unauthorized";
 import User from "../../../src/entities/User";
 import Session from "../../../src/entities/Session";
 
-import { UserResult } from "../../protocols/userProtocols";
+import { UserResult } from "../../protocols/user";
 
 const sut = authService;
 
