@@ -2,6 +2,7 @@ import CpfNotAvailableError from "@/errors/CpfNotAvailable";
 import EnrollmentData from "@/interfaces/enrollment";
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
 import Address from "@/entities/Address";
+import User from "./User";
 
 @Entity("enrollments")
 export default class Enrollment extends BaseEntity {
@@ -53,6 +54,11 @@ export default class Enrollment extends BaseEntity {
     }
 
     let enrollment = await this.findOne({ where: { userId: data.userId } });
+
+    if (!enrollment) {
+      const user = await User.findById(data.userId);
+      user.updateStatus(2);
+    }
 
     enrollment ||= Enrollment.create();
     
