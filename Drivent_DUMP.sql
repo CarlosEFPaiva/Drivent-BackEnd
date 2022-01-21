@@ -57,7 +57,8 @@ CREATE TABLE "users" (
 	"password" varchar(255) NOT NULL,
 	"createdAt" TIMESTAMP NOT NULL DEFAULT 'now()',
 	"ticketId" integer,
-	"statusId" integer NOT NULL,
+	"accomodationId" integer,
+	"statusId" integer NOT NULL DEFAULT 1,
 	"roomId" integer,
 	CONSTRAINT "users_pk" PRIMARY KEY ("id")
 ) WITH (
@@ -68,7 +69,7 @@ CREATE TABLE "users" (
 
 CREATE TABLE "tickets" (
 	"id" serial NOT NULL,
-	"type" varchar(255) NOT NULL,
+	"name" varchar(255) NOT NULL,
 	"price" varchar(255) NOT NULL,
 	CONSTRAINT "tickets_pk" PRIMARY KEY ("id")
 ) WITH (
@@ -89,11 +90,10 @@ CREATE TABLE "hotels" (
 
 
 
-CREATE TABLE "categories" (
+CREATE TABLE "accomodation_types" (
 	"id" serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"price" varchar(255) NOT NULL,
-	"ticketId" integer NOT NULL,
 	CONSTRAINT "categories_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -140,12 +140,23 @@ ALTER TABLE "enrollments" ADD CONSTRAINT "enrollments_fk0" FOREIGN KEY ("userId"
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
 
 ALTER TABLE "users" ADD CONSTRAINT "users_fk0" FOREIGN KEY ("ticketId") REFERENCES "tickets"("id");
-ALTER TABLE "users" ADD CONSTRAINT "users_fk1" FOREIGN KEY ("statusId") REFERENCES "status"("id");
-ALTER TABLE "users" ADD CONSTRAINT "users_fk2" FOREIGN KEY ("roomId") REFERENCES "rooms"("id");
+ALTER TABLE "users" ADD CONSTRAINT "users_fk1" FOREIGN KEY ("accomodationId") REFERENCES "accomodation_types"("id");
+ALTER TABLE "users" ADD CONSTRAINT "users_fk2" FOREIGN KEY ("statusId") REFERENCES "status"("id");
+ALTER TABLE "users" ADD CONSTRAINT "users_fk3" FOREIGN KEY ("roomId") REFERENCES "rooms"("id");
 
-ALTER TABLE "categories" ADD CONSTRAINT "categories_fk0" FOREIGN KEY ("ticketId") REFERENCES "tickets"("id");
+ALTER TABLE "users" ADD CONSTRAINT "users_ck0" CHECK (
+	("ticketId" IS NOT NULL AND "accomodationId" IS NOT NULL) OR 
+	("ticketId" IS NULL AND "accomodationId" IS NULL)
+);
+ALTER TABLE "users" ADD CONSTRAINT "users_ck1" CHECK ("ticketId" <> 2 OR "accomodationId" <> 2);
 
 ALTER TABLE "rooms" ADD CONSTRAINT "rooms_fk0" FOREIGN KEY ("typeId") REFERENCES "room_type"("id");
 ALTER TABLE "rooms" ADD CONSTRAINT "rooms_fk1" FOREIGN KEY ("hotelId") REFERENCES "hotels"("id");
 
 INSERT INTO "settings" (name, value) VALUES ('start_date', NOW()), ('end_date','2021-11-25 20:30:00'), ('event_title', 'Driven.t'), ('background_image', 'linear-gradient(to right, #FA4098, #FFD77F)'), ('logo_image', 'https://driveneducation.com.br/wp-content/uploads/2021/07/logo-footer.svg');
+
+INSERT INTO "tickets" (name, price) VALUES ('Presencial', '250'), ('Online', '100');
+
+INSERT INTO "accomodation_types" (name, price) VALUES ('Sem Hotel', '0'), ('Com Hotel', '350');
+
+INSERT INTO "status" (name) VALUES ('logged'), ('enrolled'), ('reserved'), ('purchased');

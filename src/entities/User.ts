@@ -1,4 +1,8 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, Column } from "typeorm";
+import Status from "./Status";
+import Ticket from "./Ticket";
+import Accomodation from "./Accomodation";
+
 import bcrypt from "bcrypt";
 import EmailNotAvailableError from "@/errors/EmailNotAvailable";
 
@@ -15,6 +19,18 @@ export default class User extends BaseEntity {
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
+
+  @OneToOne(() => Ticket, { eager: true })
+  @JoinColumn({ name: "ticketId" })
+    ticket: Ticket;
+
+  @OneToOne(() => Accomodation, { eager: true })
+  @JoinColumn({ name: "accomodationId" })
+    accomodation: Accomodation;
+
+  @OneToOne(() => Status, { eager: true })
+  @JoinColumn({ name: "statusId" })
+    status: Status;
 
   static async createNew(email: string, password: string) {
     await this.validateDuplicateEmail(email);
