@@ -87,6 +87,26 @@ export default class User extends BaseEntity {
     return this;
   }
 
+  async updateTicketAndAccomodation(ticketId: number, accomodationId: number) {
+    const newTicket = await Ticket.findOne({ id: ticketId });
+
+    if (!newTicket) {
+      throw new InvalidDataError("Ticket", ["Ticket not found"]);
+    }
+
+    const newAccomodation = await Accomodation.findOne({ id: accomodationId });
+
+    if (!newAccomodation) {
+      throw new InvalidDataError("Accomodation", ["Accomodation not found"]);
+    }
+
+    this.ticket = newTicket;
+    this.accomodation = newAccomodation;
+    this.updateStatus(3);
+    await this.save();
+    return this;
+  }
+
   getMainAtributes() {
     return {
       id: this.id,
