@@ -6,6 +6,7 @@ import Accomodation from "./Accomodation";
 import bcrypt from "bcrypt";
 import EmailNotAvailableError from "@/errors/EmailNotAvailable";
 import InvalidDataError from "@/errors/InvalidData";
+import UnauthorizedError from "@/errors/Unauthorized";
 
 @Entity("users")
 export default class User extends BaseEntity {
@@ -87,7 +88,13 @@ export default class User extends BaseEntity {
     return this;
   }
 
-  async updateTicketAndAccomodation(ticketId: number, accomodationId: number) {
+  static async updateTicketAndAccomodation(userId: number, ticketId: number, accomodationId: number) {
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedError();
+    }
+
     const newTicket = await Ticket.findOne({ id: ticketId });
 
     if (!newTicket) {
@@ -100,11 +107,11 @@ export default class User extends BaseEntity {
       throw new InvalidDataError("Accomodation", ["Accomodation not found"]);
     }
 
-    this.ticket = newTicket;
-    this.accomodation = newAccomodation;
-    this.updateStatus(3);
-    await this.save();
-    return this;
+    user.ticket = newTicket;
+    user.accomodation = newAccomodation;
+    user.updateStatus(3);
+    await user.save();
+    return user;
   }
 
   getMainAtributes() {
