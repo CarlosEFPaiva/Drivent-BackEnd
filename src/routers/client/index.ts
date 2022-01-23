@@ -6,6 +6,7 @@ import authRouter from "@/routers/client/auth";
 import enrollmentRouter from "@/routers/client/enrollment";
 import hotelRouter from "@/routers/client/hotel";
 import roomRouter from "@/routers/client/room";
+import paymentRouter from "@/routers/client/payment";
 
 import tokenValidationMiddleware from "@/middlewares/tokenValidationMiddleware";
 
@@ -16,5 +17,6 @@ router.use("/auth", authRouter);
 router.use("/enrollments", tokenValidationMiddleware, enrollmentRouter);
 router.use("/hotels", tokenValidationMiddleware, hotelRouter);
 router.use("/save-room", tokenValidationMiddleware, roomRouter);
+router.use("/payment", tokenValidationMiddleware, paymentRouter);
 
 export default router;

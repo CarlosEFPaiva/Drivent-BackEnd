@@ -7,6 +7,7 @@ import Rooms from "./Rooms";
 import bcrypt from "bcrypt";
 import EmailNotAvailableError from "@/errors/EmailNotAvailable";
 import InvalidDataError from "@/errors/InvalidData";
+import UnauthorizedError from "@/errors/Unauthorized";
 
 @Entity("users")
 export default class User extends BaseEntity {
@@ -93,6 +94,32 @@ export default class User extends BaseEntity {
     this.status = newStatus;
     await this.save();
     return this;
+  }
+
+  static async updateTicketAndAccomodation(userId: number, ticketId: number, accomodationId: number) {
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedError();
+    }
+
+    const newTicket = await Ticket.findOne({ id: ticketId });
+
+    if (!newTicket) {
+      throw new InvalidDataError("Ticket", ["Ticket not found"]);
+    }
+
+    const newAccomodation = await Accomodation.findOne({ id: accomodationId });
+
+    if (!newAccomodation) {
+      throw new InvalidDataError("Accomodation", ["Accomodation not found"]);
+    }
+
+    user.ticket = newTicket;
+    user.accomodation = newAccomodation;
+    user.updateStatus(3);
+    await user.save();
+    return user;
   }
 
   getMainAtributes() {
