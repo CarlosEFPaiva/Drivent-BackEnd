@@ -2,6 +2,7 @@ import { BaseEntity, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, Colum
 import Status from "./Status";
 import Ticket from "./Ticket";
 import Accomodation from "./Accomodation";
+import Rooms from "./Rooms";
 
 import bcrypt from "bcrypt";
 import EmailNotAvailableError from "@/errors/EmailNotAvailable";
@@ -11,16 +12,19 @@ import UnauthorizedError from "@/errors/Unauthorized";
 @Entity("users")
 export default class User extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+    id: number;
 
   @Column()
-  email: string;
+    email: string;
 
   @Column()
-  password: string;
+    password: string;
+
+  @Column()
+    roomId: number;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  createdAt: Date;
+    createdAt: Date;
 
   @OneToOne(() => Ticket, { eager: true })
   @JoinColumn({ name: "ticketId" })
@@ -33,6 +37,10 @@ export default class User extends BaseEntity {
   @OneToOne(() => Status, { eager: true })
   @JoinColumn({ name: "statusId" })
     status: Status;
+
+  @OneToOne(() => Rooms, { eager: true })
+  @JoinColumn({ name: "roomId" })
+    rooms: Rooms;
 
   static async createNew(email: string, password: string) {
     await this.validateDuplicateEmail(email);
@@ -51,7 +59,7 @@ export default class User extends BaseEntity {
   static async validateDuplicateEmail(email: string) {
     const user = await this.findOne({ email });
 
-    if(user) {
+    if (user) {
       throw new EmailNotAvailableError(email);
     }
   }
