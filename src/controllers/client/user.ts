@@ -7,3 +7,9 @@ export async function signUp(req: Request, res: Response) {
   const user = await service.createNewUser(req.body.email, req.body.password);
   res.status(httpStatus.CREATED).send(user);
 }
+
+export async function getUserInfo(req: Request, res: Response) {
+  const user = await service.getUserById(Number(req.headers.id));
+
+  res.send(user);
+}
