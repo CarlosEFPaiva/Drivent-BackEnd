@@ -8,7 +8,7 @@ export async function saveEnrollmentInfo(req: Request, res: Response) {
   const enrollmentData = req.body as EnrollmentData;
   enrollmentData.userId = req.user.id;
   const user = await enrollmentService.createNewEnrollment(enrollmentData);
-  res.send( user.getMainAtributes() ).status(httpStatus.OK);
+  res.status(httpStatus.OK).send( user.getMainAtributes() );
 }
 
 export async function getEnrollmentInfos(req: Request, res: Response) {
