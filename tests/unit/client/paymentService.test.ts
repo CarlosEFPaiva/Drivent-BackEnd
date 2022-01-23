@@ -25,4 +25,23 @@ describe("Unit tests for service/payment.ts", () => {
       expect(result).toEqual(validUser);
     });
   });
+
+  describe("confirmPayment function", () => {
+
+    const validUser = new UserResult(
+      1,
+      "teste@gmail.com",
+      { id: 4, name: "purchased" },
+      { id: 1, name: "Presencial", price: "250" },
+      { id: 2, name: "Com Hotel", price: "350" }
+    );
+
+    test("should return an object with atributes 'status' updated", async() => {
+      jest.spyOn(User, "updateStatusAndConfirmPayment").mockImplementationOnce((async(): Promise<UserResult> => validUser));
+      
+      const result = await sut.confirmPayment(1);
+
+      expect(result).toEqual(validUser);
+    });
+  });
 });
