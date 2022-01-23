@@ -114,6 +114,18 @@ export default class User extends BaseEntity {
     return user;
   }
 
+  static async updateStatusAndConfirmPayment(userId: number) {
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedError();
+    }
+
+    user.updateStatus(4);
+    await user.save();
+    return user;
+  }
+
   getMainAtributes() {
     return {
       id: this.id,
