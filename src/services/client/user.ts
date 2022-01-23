@@ -14,3 +14,9 @@ export async function createNewUser(email: string, password: string) {
   const user = await User.createNew(email, password);
   return user;
 }
+
+export async function getUserById(userId: number) {
+  const result = await User.findById(userId);
+
+  return result;
+}
