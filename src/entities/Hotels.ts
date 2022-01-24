@@ -32,4 +32,8 @@ export default class Hotels extends BaseEntity {
     }
     return available;
   }
+
+  sortRoomsByNumber() {
+    return this.rooms.sort((first, second) => Number(first.number) - Number(second.number));
+  }
 }
