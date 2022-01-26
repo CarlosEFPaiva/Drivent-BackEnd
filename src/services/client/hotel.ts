@@ -10,7 +10,7 @@ export async function getHotelsInfo() {
       description: hotel.description,
       imageUrl: hotel.imageUrl,
       roomsAvailable: roomsAvailable,
-      rooms: hotel.rooms
+      rooms: hotel.sortRoomsByNumber(),
     });
   })); 
   return hotels;
