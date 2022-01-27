@@ -21,4 +21,9 @@ export default class UserEvent extends BaseEntity {
     newSubscription.user = user;
     await newSubscription.save();
   }
+
+  static async unsubscribeUser(user: User, event: Event) {
+    const deletedResult = await this.delete({ user, event });
+    return deletedResult.affected;
+  }
 }
