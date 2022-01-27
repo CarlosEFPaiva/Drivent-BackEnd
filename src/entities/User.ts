@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, Column } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, Column } from "typeorm";
 import Status from "./Status";
 import Ticket from "./Ticket";
 import Accomodation from "./Accomodation";
@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import EmailNotAvailableError from "@/errors/EmailNotAvailable";
 import InvalidDataError from "@/errors/InvalidData";
 import UnauthorizedError from "@/errors/Unauthorized";
+import UserEvent from "./UsersEvents";
 
 @Entity("users")
 export default class User extends BaseEntity {
@@ -41,6 +42,9 @@ export default class User extends BaseEntity {
   @OneToOne(() => Rooms, { eager: true })
   @JoinColumn({ name: "roomId" })
     rooms: Rooms;
+
+  @OneToMany(() => UserEvent, userEvent => userEvent.event)
+    userEvent: UserEvent
 
   static async createNew(email: string, password: string) {
     await this.validateDuplicateEmail(email);

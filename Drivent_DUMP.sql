@@ -133,6 +133,44 @@ CREATE TABLE "rooms" (
   OIDS=FALSE
 );
 
+CREATE TABLE "users_events" (
+"id" serial NOT NULL,
+"userId" integer NOT NULL,
+"eventId" integer NOT NULL,
+CONSTRAINT "users_events_pk" PRIMARY KEY ("id")
+) WITH (
+OIDS=FALSE
+);
+
+CREATE TABLE "events" (
+"id" serial NOT NULL,
+"name" varchar(255) NOT NULL,
+"dateId" integer NOT NULL,
+"locationId" integer NOT NULL,
+"startTime" TIME NOT NULL,
+"endTime" TIME NOT NULL,
+"vacancies" integer NOT NULL,
+CONSTRAINT "events_pk" PRIMARY KEY ("id")
+) WITH (
+OIDS=FALSE
+);
+
+CREATE TABLE "dates" (
+	"id" serial NOT NULL,
+	"name" date NOT NULL UNIQUE,
+	CONSTRAINT "dates_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "locations" (
+	"id" serial NOT NULL,
+	"name" varchar(255) NOT NULL UNIQUE,
+	CONSTRAINT "locations_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
 ALTER TABLE "addresses" ADD CONSTRAINT "addresses_fk0" FOREIGN KEY ("enrollmentId") REFERENCES "enrollments"("id");
 
 ALTER TABLE "enrollments" ADD CONSTRAINT "enrollments_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
@@ -153,6 +191,13 @@ ALTER TABLE "users" ADD CONSTRAINT "users_ck1" CHECK ("ticketId" <> 2 OR "accomo
 ALTER TABLE "rooms" ADD CONSTRAINT "rooms_fk0" FOREIGN KEY ("typeId") REFERENCES "room_type"("id");
 ALTER TABLE "rooms" ADD CONSTRAINT "rooms_fk1" FOREIGN KEY ("hotelId") REFERENCES "hotels"("id");
 
+ALTER TABLE "events" ADD CONSTRAINT "events_fk0" FOREIGN KEY ("dateId") REFERENCES "dates"("id");
+ALTER TABLE "events" ADD CONSTRAINT "events_fk1" FOREIGN KEY ("locationId") REFERENCES "locations"("id");
+
+
+ALTER TABLE "users_events" ADD CONSTRAINT "users_events_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
+ALTER TABLE "users_events" ADD CONSTRAINT "users_events_fk1" FOREIGN KEY ("eventId") REFERENCES "events"("id");
+
 INSERT INTO "settings" (name, value) VALUES ('start_date', NOW()), ('end_date','2021-11-25 20:30:00'), ('event_title', 'Driven.t'), ('background_image', 'linear-gradient(to right, #FA4098, #FFD77F)'), ('logo_image', 'https://driveneducation.com.br/wp-content/uploads/2021/07/logo-footer.svg');
 
 INSERT INTO "tickets" (name, price) VALUES ('Presencial', '250'), ('Online', '100');
@@ -160,3 +205,5 @@ INSERT INTO "tickets" (name, price) VALUES ('Presencial', '250'), ('Online', '10
 INSERT INTO "accomodation_types" (name, price) VALUES ('Sem Hotel', '0'), ('Com Hotel', '350');
 
 INSERT INTO "status" (name) VALUES ('logged'), ('enrolled'), ('reserved'), ('purchased');
+
+INSERT INTO "locations" (name) VALUES ('Auditório Principal'), ('Auditório Lateral'), ('Sala de Workshop');
