@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, OneToOne, Brackets } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, OneToOne, Brackets, ManyToOne } from "typeorm";
 import Date from "./Date";
 import User from "./User";
 import UserEvent from "./UsersEvents";
@@ -11,7 +11,7 @@ export default class Event extends BaseEntity {
   @Column()
   name: string;
 
-  @OneToOne(() => Date, { eager: true })
+  @ManyToOne(() => Date, date => date.id, { eager: true })
   @JoinColumn({ name: "dateId" })
   date: Date;
 
