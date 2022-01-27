@@ -1,6 +1,6 @@
-import NotFoundError from "@/errors/NotFoundError";
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, OneToOne, Brackets } from "typeorm";
 import Date from "./Date";
+import User from "./User";
 import UserEvent from "./UsersEvents";
 
 @Entity("events")
@@ -27,27 +27,33 @@ export default class Event extends BaseEntity {
   @OneToMany(() => UserEvent, userEvent => userEvent.event)
     userEvent: UserEvent;
 
-  static async findConflictingTalks(userId: number, eventId: number) {
-    const eventToBeSubscribed = await this.findOne({ id: eventId });
-    if (!eventToBeSubscribed) {
-      throw new NotFoundError();
-    }
-    const conflitingTalk = await UserEvent
+  async findConflictingTalks(user: User) {
+    const conflictingTalk = await UserEvent
       .createQueryBuilder("userEvent")
       .leftJoinAndSelect("userEvent.event", "event")
       .leftJoinAndSelect("event.date", "date")
       .leftJoinAndSelect("userEvent.user", "user")
-      .where("user.id = :userId", { userId })
-      .andWhere("date.name = :dateName", { dateName: eventToBeSubscribed.date.name })
+      .where("user.id = :userId", { userId: user.id })
+      .andWhere("date.name = :dateName", { dateName: this.date.name })
       .andWhere(new Brackets((timeQuery) => {
-        timeQuery.where("event.startTime BETWEEN :startTime AND :endTime", { startTime: eventToBeSubscribed.startTime, endTime: eventToBeSubscribed.endTime })
-          .orWhere("event.endTime BETWEEN :startTime AND :endTime", { startTime: eventToBeSubscribed.startTime, endTime: eventToBeSubscribed.endTime })
+        timeQuery
+          .where(new Brackets((subTimeQuery) => {
+            subTimeQuery
+              .where("event.startTime > :startTime", { startTime: this.startTime })
+              .andWhere("event.startTime < :endTime", { endTime: this.endTime });
+          }))
           .orWhere(new Brackets((subTimeQuery) => {
-            subTimeQuery.where("event.startTime <= :startTime", { startTime: eventToBeSubscribed.startTime })
-              .andWhere("event.endTime >= :endTime", { endTime: eventToBeSubscribed.endTime });
+            subTimeQuery
+              .where("event.endTime > :startTime", { startTime: this.startTime })
+              .andWhere("event.endTime < :endTime", { endTime: this.endTime });
+          }))
+          .orWhere(new Brackets((subTimeQuery) => {
+            subTimeQuery
+              .where("event.startTime <= :startTime", { startTime: this.startTime })
+              .andWhere("event.endTime >= :endTime", { endTime: this.endTime });
           }));
       }))
       .getOne();
-    return conflitingTalk;
+    return conflictingTalk;
   }
 }

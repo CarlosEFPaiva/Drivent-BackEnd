@@ -6,5 +6,5 @@ import * as service from "@/services/client/talks";
 export async function subscribeUserToTalk(req: Request, res: Response) {
   //const user = await service.reserveTicket(req.user.id, req.body.ticketId, req.body.accomodationId);
   await service.subscribe(req.user.id, req.body.eventId);
-  res.sendStatus(httpStatus.OK);
+  res.sendStatus(httpStatus.CREATED);
 }

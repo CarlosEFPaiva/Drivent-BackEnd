@@ -14,4 +14,11 @@ export default class UserEvent extends BaseEntity {
   @ManyToOne(() => User, user => user.id, { eager: true })
   @JoinColumn({ name: "userId" })
   user: User;
+
+  static async createSubscription(user: User, event: Event) {
+    const newSubscription = this.create();
+    newSubscription.event = event;
+    newSubscription.user = user;
+    await newSubscription.save();
+  }
 }
