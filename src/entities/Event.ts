@@ -1,7 +1,8 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, OneToOne, Brackets, ManyToOne } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, Brackets, ManyToOne } from "typeorm";
 import Date from "./Date";
 import User from "./User";
 import UserEvent from "./UsersEvents";
+import Location from "./Location";
 
 @Entity("events")
 export default class Event extends BaseEntity {
@@ -23,6 +24,10 @@ export default class Event extends BaseEntity {
 
   @Column()
   vacancies: number;
+
+  @ManyToOne(() => Location, location => location.id, { eager: true })
+  @JoinColumn({ name: "locationId" })
+  locations: Location;
 
   @OneToMany(() => UserEvent, userEvent => userEvent.event)
     userEvent: UserEvent;
