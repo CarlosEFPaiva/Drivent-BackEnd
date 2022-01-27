@@ -12,9 +12,9 @@ export async function subscribe(userId: number, eventId: number) {
   }
 
   const user = await User.findOne({ id: userId });
-  const subscribedEvent = await eventToBeSubscribed.findConflictingTalks(user);
+  const conflictingEvent = await eventToBeSubscribed.findConflictingTalks(user);
 
-  if (subscribedEvent) {
+  if (conflictingEvent) {
     throw new ConflictError("There are other talks scheduled for the same time");
   }
   
