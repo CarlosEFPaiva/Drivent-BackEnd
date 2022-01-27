@@ -23,6 +23,12 @@ export async function subscribe(userId: number, eventId: number) {
   return;
 }
 
+export async function getDates() {
+  const dates = await Date.find();
+
+  return dates;
+}
+
 export async function getEventsByDayId(id: number) {
   const dates = await Date.findOne({ 
     where: {

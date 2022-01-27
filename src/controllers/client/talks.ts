@@ -9,6 +9,11 @@ export async function subscribeUserToTalk(req: Request, res: Response) {
   res.sendStatus(httpStatus.CREATED);
 }
 
+export async function findDates(req: Request, res: Response) {
+  const dates = await service.getDates();
+  res.send(dates);
+}
+
 export async function specificDayEvents(req: Request, res: Response) {
   if(!Number(req.params.dayId)) {
     throw new InvalidDataError("id", ["id must be a number"]); 
