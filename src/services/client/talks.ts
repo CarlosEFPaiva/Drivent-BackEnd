@@ -26,6 +26,10 @@ export async function subscribe(userId: number, eventId: number) {
 export async function getDates() {
   const dates = await Date.find();
 
+  if(dates.length === 0) {
+    throw new NotFoundError();
+  }
+
   return dates;
 }
 
