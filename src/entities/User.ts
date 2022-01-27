@@ -1,14 +1,14 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, Column, OneToMany } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, Column } from "typeorm";
 import Status from "./Status";
 import Ticket from "./Ticket";
 import Accomodation from "./Accomodation";
 import Rooms from "./Rooms";
-import UserEvent from "./UsersEvents";
 
 import bcrypt from "bcrypt";
 import EmailNotAvailableError from "@/errors/EmailNotAvailable";
 import InvalidDataError from "@/errors/InvalidData";
 import UnauthorizedError from "@/errors/Unauthorized";
+import UserEvent from "./UsersEvents";
 
 @Entity("users")
 export default class User extends BaseEntity {

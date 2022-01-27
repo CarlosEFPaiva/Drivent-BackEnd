@@ -52,7 +52,8 @@ export default class Event extends BaseEntity {
               .where("event.startTime <= :startTime", { startTime: this.startTime })
               .andWhere("event.endTime >= :endTime", { endTime: this.endTime });
           }));
-      }));
+      }))
+      .getOne();
     return conflictingTalk;
   }
 }

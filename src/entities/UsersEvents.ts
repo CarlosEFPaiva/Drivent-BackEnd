@@ -15,10 +15,10 @@ export default class UserEvent extends BaseEntity {
   @JoinColumn({ name: "userId" })
   user: User;
 
-  static async createSubscription(userId: number, eventId: number) {
+  static async createSubscription(user: User, event: Event) {
     const newSubscription = this.create();
-    newSubscription.event = await Event.findOne({ id: eventId });
-    newSubscription.user = await User.findOne({ id: userId });
+    newSubscription.event = event;
+    newSubscription.user = user;
     await newSubscription.save();
   }
 }
