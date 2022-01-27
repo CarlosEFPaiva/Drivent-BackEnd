@@ -29,6 +29,7 @@ describe("Unit tests for service/hotel.ts", () => {
         description: "description",
         imageUrl: "http://image.com",
         roomsAvailable: 1,
+        rooms: [validRoom]
       }]);
     });
   });
