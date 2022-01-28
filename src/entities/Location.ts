@@ -1,8 +1,8 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from "typeorm";
 import Event from "./Event";
 
-@Entity("dates")
-export default class Date extends BaseEntity {
+@Entity("locations")
+export default class Location extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
