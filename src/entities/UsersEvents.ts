@@ -1,3 +1,4 @@
+import ConflictError from "@/errors/ConflictError";
 import { BaseEntity, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import Event from "./Event";
 import User from "./User";
@@ -15,15 +16,25 @@ export default class UserEvent extends BaseEntity {
   @JoinColumn({ name: "userId" })
   user: User;
 
-  static async createSubscription(user: User, event: Event) {
+  static async checkConflictAndCreateSubscription(user: User, event: Event) {
+    const conflictingEvent = await event.findConflictingTalks(user);
+
+    if (conflictingEvent) {
+      throw new ConflictError("There are other talks scheduled for the same time");
+    }
+
     const newSubscription = this.create();
     newSubscription.event = event;
     newSubscription.user = user;
     await newSubscription.save();
+    event.vacancies -= 1;
+    await event.save();
   }
 
   static async unsubscribeUser(user: User, event: Event) {
     const deletedResult = await this.delete({ user, event });
+    event.vacancies += 1;
+    event.save();
     return deletedResult.affected;
   }
 }

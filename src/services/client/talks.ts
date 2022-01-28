@@ -1,7 +1,6 @@
 import Event from "@/entities/Event";
 import User from "@/entities/User";
 import UserEvent from "@/entities/UsersEvents";
-import ConflictError from "@/errors/ConflictError";
 import InvalidDataError from "@/errors/InvalidData";
 import NotFoundError from "@/errors/NotFoundError";
 
@@ -13,14 +12,7 @@ export async function subscribe(userId: number, eventId: number) {
   }
 
   const user = await User.findOne({ id: userId });
-  const conflictingEvent = await eventToBeSubscribed.findConflictingTalks(user);
-
-  if (conflictingEvent) {
-    throw new ConflictError("There are other talks scheduled for the same time");
-  }
-  
-  await UserEvent.createSubscription(user, eventToBeSubscribed);
-  return;
+  await UserEvent.checkConflictAndCreateSubscription(user, eventToBeSubscribed);
 }
 
 export async function unsubscribe(userId: number, eventId: number) {
