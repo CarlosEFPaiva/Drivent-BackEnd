@@ -11,6 +11,10 @@ export async function subscribe(userId: number, eventId: number) {
     throw new NotFoundError();
   }
 
+  if (eventToBeSubscribed.vacancies === 0) {
+    throw new InvalidDataError("subscription", ["This event has no vacancies left"]);
+  }
+
   const user = await User.findOne({ id: userId });
   await UserEvent.checkConflictAndCreateSubscription(user, eventToBeSubscribed);
 }

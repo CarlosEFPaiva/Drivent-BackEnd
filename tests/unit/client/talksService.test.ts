@@ -6,6 +6,7 @@ import UserEvent from "../../../src/entities/UsersEvents";
 import NotFoundError from "../../../src/errors/NotFoundError";
 import InvalidDataError from "../../../src/errors/InvalidData";
 import User from "../../../src/entities/User";
+import { EventTest } from "../../protocols/event";
 
 const sut = talksService;
 
@@ -30,6 +31,15 @@ describe("Unit tests for service/talks.ts", () => {
       const promise = sut.subscribe(1, 1);
 
       await expect(promise).rejects.toThrowError(NotFoundError);
+    });
+
+    test("should throw InvalidDataError when event has no vacancies left", async() => {
+      jest.spyOn(Event, "findOne").mockImplementationOnce((async(): Promise<Event> => new EventTest(0)));
+      jest.spyOn(UserEvent, "unsubscribeUser").mockImplementation(async(): Promise<number> => 0);
+      
+      const promise = sut.unsubscribe(1, 1);
+
+      await expect(promise).rejects.toThrowError(InvalidDataError);
     });
 
   });
