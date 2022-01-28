@@ -5,7 +5,6 @@ import Hotels from "../../../src/entities/Hotels";
 import { HotelResult } from "../../protocols/hotel";
 import { RoomResult } from "../../protocols/room";
 import { RoomTypeResult } from "../../protocols/roomType";
-// import { UserResult } from "../../protocols/user";
 
 const sut = hotelService;
 describe("Unit tests for service/hotel.ts", () => {
@@ -29,6 +28,7 @@ describe("Unit tests for service/hotel.ts", () => {
         description: "description",
         imageUrl: "http://image.com",
         roomsAvailable: 1,
+        rooms: [validRoom]
       }]);
     });
   });
