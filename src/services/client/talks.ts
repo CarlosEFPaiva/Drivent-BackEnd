@@ -45,16 +45,18 @@ export async function getDates() {
   return dates;
 }
 
-export async function getEventsByDayId(id: number) {
+export async function getEventsByDayId(userId: number, dateId: number) {
   const dates = await Date.findOne({ 
     where: {
-      id
+      id: dateId
     },
     relations: ["events"]
   });
 
-  if(dates.events.length === 0) {
+  if(!dates || dates.events.length === 0) {
     throw new NotFoundError();
   }
-  return dates.events;
+  const userHashtable = await UserEvent.createUserEventHashtable(userId);
+
+  return dates.events.map((event) => event.includeUserSubscriptions(userHashtable));
 }

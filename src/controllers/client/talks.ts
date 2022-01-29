@@ -23,7 +23,7 @@ export async function specificDayEvents(req: Request, res: Response) {
   if(!Number(req.params.dayId)) {
     throw new InvalidDataError("id", ["id must be a number"]); 
   }
-  const events = await service.getEventsByDayId(Number(req.params.dayId));
+  const events = await service.getEventsByDayId(req.user.id, Number(req.params.dayId));
 
   res.send(events);
 }

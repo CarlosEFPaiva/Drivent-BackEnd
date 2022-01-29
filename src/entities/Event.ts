@@ -31,6 +31,11 @@ export default class Event extends BaseEntity {
 
   @OneToMany(() => UserEvent, userEvent => userEvent.event)
     userEvent: UserEvent;
+  
+  includeUserSubscriptions(userHashtable: Record<string, boolean>) {
+    const isUserSubscribed = !!userHashtable[String(this.id)];
+    return { ...this, isUserSubscribed };
+  }
 
   async findConflictingTalks(user: User) {
     const conflictingTalk = await UserEvent
