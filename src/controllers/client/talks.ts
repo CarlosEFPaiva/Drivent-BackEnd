@@ -27,3 +27,8 @@ export async function specificDayEvents(req: Request, res: Response) {
 
   res.send(events);
 }
+
+export async function getEventInfoByUser(req: Request, res: Response) {
+  const result = await service.getTalksByUserId(req.user.id);
+  res.send(result);
+}

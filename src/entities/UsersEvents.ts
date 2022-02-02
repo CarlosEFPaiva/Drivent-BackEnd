@@ -39,11 +39,17 @@ export default class UserEvent extends BaseEntity {
   }
 
   static async createUserEventHashtable(userId: number) {
-    const hashtable: Record<string, boolean> = {}; 
+    const hashtable: Record<string, boolean> = {};
     const userEvents = await this.find({ user: { id: userId } });
     userEvents.forEach((userEvent) => {
       hashtable[String(userEvent.event.id)] = true;
     });
     return hashtable;
+  }
+
+  static async getEventsByUserId(userId: number) {
+    const userEvents = this.find({ user: { id: userId } });
+
+    return userEvents;
   }
 }
