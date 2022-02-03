@@ -60,3 +60,9 @@ export async function getEventsByDayId(userId: number, dateId: number) {
 
   return dates.events.map((event) => event.includeUserSubscriptions(userHashtable));
 }
+
+export async function getTalksByUserId(userId: number) {
+  const talks = await UserEvent.getEventsByUserId(userId);
+
+  return talks;
+}
